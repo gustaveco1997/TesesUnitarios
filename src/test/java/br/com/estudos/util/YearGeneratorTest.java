@@ -1,7 +1,5 @@
 package br.com.estudos.util;
 
-import junit.framework.TestCase;
-import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,5 +21,4 @@ public class YearGeneratorTest {
             Assert.assertTrue("Valor: " + valor, valor >= 1900 && valor <= LocalDate.now().getYear());
         }
     }
-
 }

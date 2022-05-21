@@ -1,9 +1,14 @@
 package br.com.estudos.estrutura;
 
+import br.com.estudos.builder.ClienteBuilder;
+import br.com.estudos.builder.OrdemBuilder;
 import org.junit.*;
+import org.mockito.Mockito;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
@@ -21,18 +26,16 @@ public class LocadoraServiceTest extends LocadoraAbstractTest {
 
     @BeforeClass
     public static void beforeClass() {
-        System.out.println("Teste iniciado");
     }
 
     @AfterClass
     public static void afterClass() {
-        System.out.println("Teste Finalizado");
     }
 
     @Test
     public void data_devolucao() {
         Filme filme = locadora.getByNome("Pantera Negra").orElse(null);
-        Cliente cliente = new Cliente("12345678909", "Paula", LocalDate.of(1999, 3, 23));
+        Cliente cliente = ClienteBuilder.clienteNovo().get();
 
         Ordem ordem = locadoraService.alugar(cliente, filme);
 
@@ -46,7 +49,7 @@ public class LocadoraServiceTest extends LocadoraAbstractTest {
     @Test
     public void disponibilidade_filme() {
         Filme[] filmes = {locadora.getByNome("Viúva Negra").orElse(null), locadora.getByNome("Django Livre").orElse(null)};
-        Cliente cliente = new Cliente("12345678909", "Paula", LocalDate.of(1999, 3, 23));
+        Cliente cliente = ClienteBuilder.clienteNovo().get();
 
         Ordem ordem = null;
         try {
@@ -61,7 +64,7 @@ public class LocadoraServiceTest extends LocadoraAbstractTest {
     @Test(expected = IllegalStateException.class)
     public void disponibilidade_filme_elegante() {
         Filme[] filmes = {locadora.getByNome("Viúva Negra").orElse(null), locadora.getByNome("Django Livre").orElse(null)};
-        Cliente cliente = new Cliente("12345678909", "Paula", LocalDate.of(1999, 3, 23));
+        Cliente cliente = ClienteBuilder.clienteNovo().get();
         Ordem ordem = locadoraService.alugar(cliente, filmes);
     }
 
@@ -72,12 +75,13 @@ public class LocadoraServiceTest extends LocadoraAbstractTest {
         expectedException.expectMessage("O filme não possui estoque: Viúva Negra");
 
         Filme[] filmes = {locadora.getByNome("Viúva Negra").orElse(null), locadora.getByNome("Django Livre").orElse(null)};
-        Cliente cliente = new Cliente("12345678909", "Paula", LocalDate.of(1999, 3, 23));
+        Cliente cliente = ClienteBuilder.clienteNovo().get();
         Ordem ordem = locadoraService.alugar(cliente, filmes);
     }
 
     @Test
-    public void devolucao_domingo(){
+    @Ignore
+    public void devolucao_domingo() {
 
         //Se a condição for verdadeira, vai executar
         //Caso contrário, vai pular o teste
@@ -85,9 +89,52 @@ public class LocadoraServiceTest extends LocadoraAbstractTest {
         //mas pode ser útil, em algum momento, aque ainda não sei
         Assume.assumeTrue(LocalDate.now().getDayOfWeek() == DayOfWeek.FRIDAY);
 
-        Cliente cliente = new Cliente("123", "Gustavo", LocalDate.now());
-        Ordem ordem = locadoraService.alugar(cliente , getFilme("Django Livre"));
+        Cliente cliente = ClienteBuilder.clienteNovo().get();
+        Ordem ordem = locadoraService.alugar(cliente, getFilme("Django Livre"));
         assertEquals(ordem.getDataDevolucao().getDayOfWeek(), DayOfWeek.MONDAY);
     }
 
+    @Test
+    public void cliente_em_debito() {
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage("Cliente está em débito com a locadora");
+
+        Cliente cliente = ClienteBuilder.clienteNovo().nome("Gustavo").get();
+        Cliente cliente2 = ClienteBuilder.clienteNovo().nome("asd").get();
+        Mockito.when(situacao.isNegativado(cliente)).thenReturn(true);
+
+        try {
+            locadoraService.alugar(cliente, getFilme("Django Livre"));
+        } catch (IllegalStateException e) {
+            throw e;
+        } finally {
+            //verificação não necessária, pois lança a exception quando está negativado
+            Mockito.verify(situacao).isNegativado(cliente);
+        }
+    }
+
+    @Test
+    public void notificar_atraso() {
+        //Cenário
+        List<Ordem> ordens = Arrays.asList(
+                OrdemBuilder.builder().ordemAtrasada().build(),
+                OrdemBuilder.builder().ordemComum().build()
+        );
+        Mockito.when(dao.obterOrdensAtrasadas()).thenReturn(ordens);
+
+        //acao
+        locadoraService.notificarAtrasos();
+
+        //Verificação
+
+        //Quantiade de vezes chamada
+        Mockito.verify(emailService, Mockito.times(1)).notificarAtraso(ordens.get(0));
+        //se foi chamado
+        Mockito.verify(emailService).notificarAtraso(ordens.get(0));
+        //Certifica que nunca foi chamado
+        Mockito.verify(emailService, Mockito.never()).notificarAtraso(ordens.get(1));
+        //Certifica que não teve mais interações na interface
+        Mockito.verifyNoMoreInteractions(emailService);
+
+    }
 }

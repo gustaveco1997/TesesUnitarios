@@ -1,5 +1,7 @@
 package br.com.estudos.estrutura;
 
+import br.com.estudos.builder.ClienteBuilder;
+import org.hamcrest.CoreMatchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -19,7 +21,7 @@ public class AssertionsSamples {
     public void tratamento_com_error_collector(){
         error.checkThat(12d, is(equalTo(12d)));
         error.checkThat("Vassoura", startsWith("Vass"));
-        error.checkThat("Vassoura", startsWith("lambda"));
+        error.checkThat("Vassoura", endsWith("oura"));
     }
 
     @Test
@@ -29,12 +31,12 @@ public class AssertionsSamples {
         assertTrue("Teste".equalsIgnoreCase("teste"));
         assertTrue("nasaq".equalsIgnoreCase("NASAQ"));
 
-        Cliente c1 = new Cliente("000", "Nome", LocalDate.now());
+        Cliente c1 = ClienteBuilder.clienteNovo().nome("Nome").get();
         Cliente c2 = c1;
         assertSame(c1, c2); //valida instancias
 
-        Cliente c3 = new Cliente("000", "Nome", LocalDate.now());
-        Cliente c4 = new Cliente("000", "Paula", LocalDate.now());
+        Cliente c3 = ClienteBuilder.clienteNovo().nome("Nome").get();
+        Cliente c4 = ClienteBuilder.clienteNovo().nome("Paula").get();
 
         assertNotEquals(c3, c4);
         assertEquals(c3, c1);

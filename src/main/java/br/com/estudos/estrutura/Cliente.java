@@ -12,6 +12,7 @@ public class Cliente {
     private String cpf;
     private String nome;
     private LocalDate dataNascimento;
+    private String email;
 
     @Override
     public boolean equals(Object o) {

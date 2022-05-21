@@ -1,17 +1,14 @@
 package br.com.estudos.estrutura;
 
+import br.com.estudos.builder.ClienteBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 
 
-    public class LocadoraServiceDescontoTest extends LocadoraAbstractTest {
+public class LocadoraServiceDescontoTest extends LocadoraAbstractTest {
 
     private Cliente cliente;
 
@@ -19,7 +16,7 @@ import java.util.Collection;
     @Before
     public void before() {
         super.before();
-        cliente = new Cliente("123", "Lorena", LocalDate.now());
+        cliente = ClienteBuilder.clienteNovo().get();
     }
 
 
@@ -151,10 +148,10 @@ import java.util.Collection;
     @Test
     public void nao_deve_alugar_com_filme_nulo() {
         expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage("O filme escolhido é inválido");
+        expectedException.expectMessage("Escolha os filmes para alugar");
 
         Filme[] filmes = {null};
-        locadoraService.alugar(null, filmes);
+        locadoraService.alugar(cliente, filmes);
     }
 
     @Test

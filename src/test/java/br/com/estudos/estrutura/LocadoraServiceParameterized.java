@@ -1,12 +1,12 @@
 package br.com.estudos.estrutura;
 
+import br.com.estudos.builder.ClienteBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -43,11 +43,11 @@ public class LocadoraServiceParameterized extends LocadoraAbstractTest {
     @Before
     public void before() {
         super.before();
-        cliente = new Cliente("123", "Lorena", LocalDate.now());
+        cliente = ClienteBuilder.clienteNovo().get();
     }
 
     //@Parameterized.Parameters(name="Teste {index} = {0} - {1}")
-    @Parameterized.Parameters(name="{index} = {2}")
+    @Parameterized.Parameters(name = "{index} = {2}")
     public static Collection<Object[]> parametros() {
 
         filme1 = new Locadora().getByNome("Filme Genérico").orElse(null);

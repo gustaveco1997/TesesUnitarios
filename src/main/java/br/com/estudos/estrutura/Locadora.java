@@ -19,6 +19,7 @@ public class Locadora {
         add(new Filme("Espetacular Miranha 2", LocalDate.of(1997, 8, 15), 1, 30));
         add(new Filme("Miranha Longe de casa", LocalDate.of(1997, 8, 15), 1, 30));
         add(new Filme("Miranha Sem volta pra casa", LocalDate.of(1997, 8, 15), 1, 30));
+        add(new Filme("Filme Genérico", LocalDate.of(1997, 8, 15), 50, 30));
     }};
 
     public List<Filme> getAllFilmes() {

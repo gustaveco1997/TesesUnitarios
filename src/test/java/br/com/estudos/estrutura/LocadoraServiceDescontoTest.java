@@ -3,18 +3,26 @@ package br.com.estudos.estrutura;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class LocadoraServiceDescontoTest extends LocadoraAbstractTest {
+
+    public class LocadoraServiceDescontoTest extends LocadoraAbstractTest {
 
     private Cliente cliente;
 
+    //DDT -> Data Driven Test
     @Before
     public void before() {
         super.before();
         cliente = new Cliente("123", "Lorena", LocalDate.now());
     }
+
+
 
     @Test
     public void calcular_valor_total_1_filme() {
@@ -154,11 +162,7 @@ public class LocadoraServiceDescontoTest extends LocadoraAbstractTest {
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage("Escolha os filmes para alugar");
 
-        locadoraService.alugar(cliente, null);
+        locadoraService.alugar(cliente, new ArrayList<>());
     }
 
-    private double valorComDesconto(Filme filme, double percentualDesconto) {
-        double desconto = filme.getValorAluguel() * percentualDesconto;
-        return filme.getValorAluguel() - desconto;
-    }
 }

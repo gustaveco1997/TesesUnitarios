@@ -17,9 +17,17 @@ public class Ordem {
     private Cliente cliente;
     private double valorTotal;
 
+    public Ordem(Cliente cliente, List<Filme> filmes) {
+        start(cliente, filmes);
+    }
+
     public Ordem(Cliente cliente, Filme... filmes) {
+        start(cliente, List.of(filmes));
+    }
+
+    private void start(Cliente cliente, List<Filme> filmes) {
         this.cliente = cliente;
-        this.filmes = Arrays.stream(filmes).collect(Collectors.toList());
+        this.filmes = filmes;
         calcularValorTotal();
     }
 
@@ -43,7 +51,7 @@ public class Ordem {
 
         double valorTotal = 0d;
         for (int i = 0; i < filmes.size(); i++) {
-            Double percentual = tabelaDesconto.get(i+1);
+            Double percentual = tabelaDesconto.get(i + 1);
             valorTotal += calcularComDesconto(filmes.get(i), percentual != null ? percentual : 0d);
         }
 

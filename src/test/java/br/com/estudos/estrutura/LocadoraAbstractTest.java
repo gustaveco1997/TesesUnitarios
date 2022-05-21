@@ -17,7 +17,13 @@ public abstract class LocadoraAbstractTest {
         locadora = new Locadora();
     }
 
-    protected Filme getFilme(String nome){
+    protected Filme getFilme(String nome) {
         return locadora.getByNome(nome).orElse(null);
+    }
+
+    protected static double valorComDesconto(Filme filme, double percentualDesconto) {
+        if(filme == null) return 0d;
+        double desconto = filme.getValorAluguel() * percentualDesconto;
+        return filme.getValorAluguel() - desconto;
     }
 }

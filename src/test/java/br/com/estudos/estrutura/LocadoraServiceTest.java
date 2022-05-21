@@ -1,8 +1,8 @@
 package br.com.estudos.estrutura;
 
 import org.junit.*;
-import org.junit.rules.ExpectedException;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -74,6 +74,20 @@ public class LocadoraServiceTest extends LocadoraAbstractTest {
         Filme[] filmes = {locadora.getByNome("Viúva Negra").orElse(null), locadora.getByNome("Django Livre").orElse(null)};
         Cliente cliente = new Cliente("12345678909", "Paula", LocalDate.of(1999, 3, 23));
         Ordem ordem = locadoraService.alugar(cliente, filmes);
+    }
+
+    @Test
+    public void devolucao_domingo(){
+
+        //Se a condição for verdadeira, vai executar
+        //Caso contrário, vai pular o teste
+        //Vejo que não é uma boa prática neste que utilizei
+        //mas pode ser útil, em algum momento, aque ainda não sei
+        Assume.assumeTrue(LocalDate.now().getDayOfWeek() == DayOfWeek.FRIDAY);
+
+        Cliente cliente = new Cliente("123", "Gustavo", LocalDate.now());
+        Ordem ordem = locadoraService.alugar(cliente , getFilme("Django Livre"));
+        assertEquals(ordem.getDataDevolucao().getDayOfWeek(), DayOfWeek.MONDAY);
     }
 
 }

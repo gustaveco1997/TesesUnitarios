@@ -35,4 +35,5 @@ public class LocadoraTest {
         Optional<Filme> filme = locadora.getByNome("django livre");
         Assert.assertTrue(filme.isPresent());
     }
+
 }
